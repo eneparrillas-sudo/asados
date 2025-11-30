@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EneParrillas — La experiencia parrillera 🇨🇱</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --azul:#0033a0;
+      --rojo:#d52b1e;
+      --rojo-2:#ff4c3b;
+      --oscuro:#1f2430;
+      --fondo:#0b1020;
+      --blanco:#ffffff;
+      --gris:#e6e6e6;
+      --dorado:#f5a623;
+      --verde:#15a043;
+      --glass:rgba(255,255,255,0.08);
+      --bordes:rgba(255,255,255,0.18);
+      --texto:#e9edf7;
+      --muted:#cbd3e7;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0; padding:0;
+      background:
+        radial-gradient(1200px 600px at 80% -100%, rgba(213,43,30,0.25), transparent 60%),
+        radial-gradient(1000px 500px at -50% 0%, rgba(0,51,160,0.25), transparent 60%),
+        linear-gradient(180deg, #0b1020 0%, #151a28 100%);
+      color:var(--blanco);
+      font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto;
+    }
+    header{
+      padding:1.2rem;
+      border-bottom:1px solid var(--bordes);
+      backdrop-filter:saturate(120%) blur(6px);
+      position:sticky; top:0; z-index:10;
+      background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.1));
+    }
+    .brand{
+      display:flex; align-items:center; justify-content:center; gap:.8rem;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:12px;
+      background: conic-gradient(from 210deg, var(--rojo), var(--rojo-2), var(--dorado), var(--azul));
+      box-shadow:0 10px 20px rgba(0,0,0,0.35);
+      border:2px solid rgba(255,255,255,0.25);
+    }
+    h1{
+      margin:0; font-family:'Oswald', sans-serif; letter-spacing:.5px; font-weight:600; font-size:1.8rem;
+    }
+    .sub{
+      margin:.2rem 0 0; color:var(--muted); font-size:.95rem;
+    }
+
+    main{ max-width:980px; margin:2rem auto; padding:0 1rem;}
+    .panel{
+      display:grid; grid-template-columns: 1.2fr .8fr; gap:1.2rem;
+    }
+    .card{
+      background:var(--glass);
+      border:1px solid var(--bordes);
+      border-radius:20px;
+      padding:1rem;
+      box-shadow:0 12px 24px rgba(0,0,0,0.25);
+    }
+    .card h2{
+      margin:0 0 .8rem;
+      font-family:'Oswald'; font-weight:600; font-size:1.4rem;
+      display:flex; align-items:center; gap:.5rem;
+    }
+    .grid{
+      display:grid; grid-template-columns:1fr 1fr; gap:.8rem;
+    }
+    .field{ display:flex; flex-direction:column; gap:.35rem; }
+    .label{ font-weight:600; font-size:.9rem; color:var(--texto); }
+
+    /* Campos base */
+    input[type="number"], input[type="text"], select{
+      background:rgba(255,255,255,0.06);
+      border:1px solid var(--bordes);
+      color:var(--blanco);
+      border-radius:12px;
+      padding:.7rem .8rem;
+      outline:none;
+      transition:border .2s, box-shadow .2s;
+      -webkit-appearance:none; /* mejora consistencia en Safari */
+      appearance:none;
+    }
+    input::placeholder{ color:#aab2c7; }
+    input:focus, select:focus{
+      border-color:rgba(213,43,30,0.85);
+      box-shadow:0 0 0 3px rgba(213,43,30,0.25);
+    }
+
+    /* Legibilidad de listas desplegables en Windows y temas claros */
+    select option, select optgroup{
+      background-color:#1b2233;  /* fondo oscuro para el listado */
+      color:#e9edf7;             /* texto claro */
+    }
+    /* Fallback adicional para navegadores que ignoran option bg */
+    @supports not (select:focus-visible){
+      select{
+        color-scheme: dark; /* sugiere tema oscuro al sistema */
+      }
+    }
+
+    .segmented{
+      display:flex; gap:.5rem; flex-wrap:wrap;
+    }
+    .segmented button{
+      flex:1 0 auto;
+      background:rgba(255,255,255,0.06);
+      border:1px solid var(--bordes);
+      color:var(--texto);
+      border-radius:999px;
+      padding:.55rem .9rem; font-weight:600; cursor:pointer;
+      transition:all .2s;
+    }
+    .segmented button.active{
+      background:linear-gradient(90deg, var(--rojo), var(--rojo-2));
+      color:var(--blanco); border-color:transparent;
+      box-shadow:0 8px 16px rgba(213,43,30,0.35);
+    }
+    .actions{ display:flex; gap:.8rem; margin-top:1rem; }
+    .btn{
+      padding:.8rem 1rem; border-radius:12px; border:none; cursor:pointer;
+      font-weight:700; letter-spacing:.2px;
+      transition:transform .08s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .btn-primary{
+      background:linear-gradient(90deg, var(--rojo), var(--rojo-2));
+      color:var(--blanco);
+      box-shadow:0 10px 22px rgba(213,43,30,0.35);
+    }
+    .btn-primary:hover{ filter:brightness(1.05); }
+    .btn-primary:active{ transform:scale(0.98); }
+    .btn-secondary{
+      background:linear-gradient(90deg, #0b5bd7, var(--azul));
+      color:#e9edf7;
+      box-shadow:0 10px 22px rgba(0,51,160,0.35);
+    }
+
+    .muted{ color:var(--muted); font-size:.9rem; }
+
+    #resultado h3{
+      margin:0.6rem 0; font-size:1.05rem; color:#eef3ff; font-weight:700;
+    }
+    .stats{
+      display:grid; grid-template-columns: repeat(2,1fr); gap:.7rem; margin:.7rem 0 1rem;
+    }
+    .stat{
+      background:rgba(255,255,255,0.06);
+      border:1px solid var(--bordes);
+      border-radius:12px; padding:.7rem;
+    }
+    .stat .k{ font-size:.8rem; color:#aab2c7; }
+    .stat .v{ font-size:1.15rem; font-weight:700; margin-top:.2rem; }
+
+    .timeline{ display:grid; gap:.6rem; margin-top:.8rem; }
+    .step{
+      display:flex; gap:.8rem; align-items:flex-start;
+      background:rgba(255,255,255,0.05);
+      border:1px solid var(--bordes); border-radius:12px; padding:.6rem .7rem;
+    }
+    .step .dot{
+      width:12px; height:12px; border-radius:50%;
+      background:var(--dorado); margin-top:.3rem; box-shadow:0 0 0 3px rgba(245,166,35,0.25);
+    }
+    .tip{
+      background:rgba(21,160,67,0.12);
+      border:1px solid rgba(21,160,67,0.35);
+      color:#b8f3cf; border-radius:12px; padding:.6rem .7rem; margin-top:.8rem;
+    }
+
+    .history{
+      display:grid; gap:.6rem;
+    }
+    .item{
+      display:flex; justify-content:space-between; gap:.8rem; align-items:center;
+      background:rgba(255,255,255,0.06);
+      border:1px solid var(--bordes); border-radius:12px; padding:.6rem .7rem;
+    }
+    .item .meta{ font-size:.9rem; color:var(--muted); }
+    .item .title{ font-weight:700; }
+    .link{
+      color:#9bc1ff; text-decoration:none; font-weight:600;
+    }
+
+    footer{
+      text-align:center; padding:1.2rem; margin:2rem 0 2.5rem;
+      color:var(--muted);
+    }
+
+    @media (max-width:960px){
+      .panel{ grid-template-columns:1fr; }
+      .grid{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>EneParrillas</h1>
+        <p class="sub">De cálculo a experiencia parrillera — listo para escalar a pro</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="panel">
+      <section class="card">
+        <h2>🎛️ Configura tu asado</h2>
+
+        <form id="formParrilla">
+          <div class="grid">
+            <div class="field">
+              <label class="label" for="personas">Personas</label>
+              <input type="number" id="personas" min="1" value="6" placeholder="Ej: 6" required />
+            </div>
+
+            <div class="field">
+              <label class="label" for="nivel">Nivel del asador</label>
+              <select id="nivel" required>
+                <option value="principiante">Principiante</option>
+                <option value="avanzado">Avanzado</option>
+                <option value="experto">Experto</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="label" for="tipoCarne">Tipo de carne</label>
+              <select id="tipoCarne" required>
+                <option value="">Selecciona</option>
+                <option value="vacuno">Vacuno</option>
+                <option value="cerdo">Cerdo</option>
+                <option value="pollo">Pollo</option>
+                <option value="pescado">Pescado</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="label" for="corte">Corte</label>
+              <select id="corte" required>
+                <option value="">Selecciona tipo de carne primero</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="label" for="coccion">Punto de cocción</label>
+              <select id="coccion" required>
+                <option value="jugosa">Jugosa</option>
+                <option value="apunto">A punto</option>
+                <option value="biencocida">Bien cocida</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="label" for="precioKg">Precio por kilo (CLP)</label>
+              <input type="number" id="precioKg" min="0" value="12990" placeholder="Ej: 12990" />
+            </div>
+          </div>
+
+          <div class="field" style="margin-top:.6rem">
+            <label class="label">Tipo de parrilla</label>
+            <div class="segmented" role="group" aria-label="Tipo de parrilla">
+              <button type="button" class="seg" data-parrilla="carbon">Carbón</button>
+              <button type="button" class="seg" data-parrilla="gas">Gas</button>
+              <button type="button" class="seg active" data-parrilla="leña">Leña</button>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn btn-primary">🔥 Calcular experiencia</button>
+            <button type="button" id="guardar" class="btn btn-secondary">💾 Guardar en historial</button>
+          </div>
+          <p class="muted">Tu asado, tu estilo. La experiencia se adapta al corte, al fuego y a tu nivel como asador.</p>
+        </form>
+      </section>
+
+      <section class="card" id="resultado">
+        <h2>📊 Resultado y plan de cocción</h2>
+        <p class="muted">Configura tu asado y obtén recomendaciones dinámicas con tiempos, giros y tips.</p>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:1rem">
+      <h2>🧭 Historial rápido</h2>
+      <div id="historial" class="history"></div>
+    </section>
+  </main>
+
+  <footer>
+    Hecho con sabor chileno 🇨🇱 por — EneParrillas.cl
+  </footer>
+
+  <script>
+    // Datos de cortes y pesos por unidad
+    const cortes = {
+      vacuno: {
+        "Asado de tira (2-3 cm)": { unidadKg: 1.2 },
+        "Asado de tira (5-7 cm)": { unidadKg: 2.2 },
+        "Lomo vetado (entero)": { unidadKg: 2.2 },
+        "Lomo liso (bife)": { unidadKg: 2.0 },
+        "Punta de ganso": { unidadKg: 1.3 },
+        "Picana / Punta picana": { unidadKg: 1.6 },
+        "Tapabarriga": { unidadKg: 3.0 },
+        "Entraña": { unidadKg: 0.8 }
+      },
+      cerdo: {
+        "Costillar": { unidadKg: 2.8 },
+        "Pulpa / Ganso cerdo": { unidadKg: 1.8 },
+        "Chuleta gruesa": { unidadKg: 0.3 },
+        "Longaniza parrillera": { unidadKg: 0.25 }
+      },
+      pollo: {
+        "Trutro largo": { unidadKg: 0.35 },
+        "Pechuga entera": { unidadKg: 0.45 },
+        "Alitas": { unidadKg: 0.12 }
+      },
+      pescado: {
+        "Salmón en lonjas": { unidadKg: 0.18 },
+        "Reineta filete": { unidadKg: 0.22 },
+        "Congrio rodajas": { unidadKg: 0.25 }
+      }
+    };
+
+    // Gramaje base por persona según tipo y nivel del asador
+    const gramosBase = {
+      vacuno: { principiante: 230, avanzado: 260, experto: 300 },
+      cerdo:  { principiante: 220, avanzado: 250, experto: 280 },
+      pollo:  { principiante: 220, avanzado: 240, experto: 260 },
+      pescado:{ principiante: 200, avanzado: 220, experto: 240 }
+    };
+
+    // Fuego recomendado por sensibilidad del corte (segundos de la mano)
+    function fuegoRecomendado(tipo, corte){
+      const base = { vacuno: 5, cerdo: 6, pollo: 5, pescado: 4 };
+      const ajustes = {
+        "Lomo vetado (entero)": 4,
+        "Tapabarriga": 6,
+        "Asado de tira (5-7 cm)": 5,
+        "Asado de tira (2-3 cm)": 6,
+        "Punta de ganso": 5,
+        "Entraña": 6,
+        "Costillar": 6,
+        "Longaniza parrillera": 6,
+        "Trutro largo": 5,
+        "Pechuga entera": 5,
+        "Alitas": 6,
+        "Salmón en lonjas": 4,
+        "Reineta filete": 5,
+        "Congrio rodajas": 5
+      };
+      const seg = ajustes[corte] ?? base[tipo] ?? 6;
+      if (seg >= 7) return "Bajo — mano aguanta ~8 seg";
+      if (seg >= 5) return "Medio — mano aguanta ~6 seg";
+      return "Fuerte — mano aguanta ~3–4 seg";
+    }
+
+    // Intervalo de giro según masa total
+    function giroCadaMinutos(pesoTotalKg, tipo){
+      if (tipo === "pescado") return 5;
+      if (pesoTotalKg <= 1) return 10;
+      if (pesoTotalKg <= 2) return 15;
+      return 20;
+    }
+
+    // Tiempo base por kg según tipo y grosor aproximado del corte
+    function tiempoBasePorKg(tipo, corte){
+      const base = { vacuno: 35, cerdo: 40, pollo: 32, pescado: 24 }; // minutos por kg
+      const grosorBoost = {
+        "Asado de tira (5-7 cm)": 1.35,
+        "Lomo vetado (entero)": 1.15,
+        "Punta de ganso": 1.15,
+        "Tapabarriga": 1.1,
+        "Pechuga entera": 1.1,
+        "Costillar": 1.25
+      };
+      return (base[tipo] ?? 35) * (grosorBoost[corte] ?? 1.0);
+    }
+
+    // Ajuste por punto de cocción
+    function factorCoccion(punto){
+      if (punto === "jugosa") return 0.8;
+      if (punto === "apunto") return 1.0;
+      return 1.3; // bien cocida
+    }
+
+    // Ajuste por tipo de parrilla
+    function factorParrilla(tipo){
+      if (tipo === "gas") return 0.95;
+      if (tipo === "leña") return 1.05;
+      return 1.0; // carbón
+    }
+
+    // UI: referencias
+    const tipoCarneSel = document.getElementById("tipoCarne");
+    const corteSel = document.getElementById("corte");
+    const nivelSel = document.getElementById("nivel");
+    const personasInput = document.getElementById("personas");
+    const precioInput = document.getElementById("precioKg");
+    const resultado = document.getElementById("resultado");
+    const historialDiv = document.getElementById("historial");
+    const parrillaBtns = document.querySelectorAll(".seg");
+    let tipoParrilla = "leña";
+
+    function actualizarCortes(){
+      const tipo = tipoCarneSel.value;
+      corteSel.innerHTML = "";
+      if (!cortes[tipo]){
+        const option = document.createElement("option");
+        option.value = ""; option.textContent = "Selecciona tipo de carne primero";
+        corteSel.appendChild(option); return;
+      }
+      Object.keys(cortes[tipo]).forEach(c => {
+        const option = document.createElement("option");
+        option.value = c; option.textContent = c;
+        corteSel.appendChild(option);
+      });
+    }
+    tipoCarneSel.addEventListener("change", actualizarCortes);
+
+    parrillaBtns.forEach(b=>{
+      b.addEventListener("click", ()=>{
+        parrillaBtns.forEach(x=>x.classList.remove("active"));
+        b.classList.add("active");
+        tipoParrilla = b.dataset.parrilla;
+      });
+    });
+
+    // Cálculo principal
+    document.getElementById("formParrilla").addEventListener("submit", (e)=>{
+      e.preventDefault();
+
+      const personas = parseInt(personasInput.value || "0", 10);
+      const tipoCarne = tipoCarneSel.value;
+      const corte = corteSel.value;
+      const nivel = nivelSel.value;
+      const coccion = document.getElementById("coccion").value;
+      const precioKg = parseInt(precioInput.value || "0", 10);
+
+      if (!personas || !tipoCarne || !corte || !nivel || !coccion){
+        resultado.innerHTML = "<p class='muted'>Completa todos los campos para ver tu plan parrillero.</p>";
+        return;
+      }
+
+      const gramos = (gramosBase[tipoCarne]?.[nivel]) ?? 250;
+      const totalGramos = gramos * personas;
+      const totalKg = totalGramos / 1000;
+
+      const unidadKg = cortes[tipoCarne]?.[corte]?.unidadKg || 1;
+      const unidades = Math.ceil(totalKg / unidadKg);
+
+      const minPorKg = tiempoBasePorKg(tipoCarne, corte);
+      const tiempoEstimado = Math.round(minPorKg * totalKg * factorCoccion(coccion) * factorParrilla(tipoParrilla));
+      const giroCada = giroCadaMinutos(totalKg, tipoCarne);
+      const vueltas = Math.max(1, Math.floor(tiempoEstimado / giroCada));
+      const fuego = fuegoRecomendado(tipoCarne, corte);
+
+      const costoCLP = precioKg ? Math.round(precioKg * totalKg) : 0;
+
+      const steps = generarTimeline({ tipoCarne, corte, nivel, coccion, tipoParrilla, tiempoEstimado, giroCada });
+
+      const html = `
+        <h3>🍖 Corte: <span style="color:#ffd27a">${corte}</span></h3>
+        <div class="stats">
+          <div class="stat"><div class="k">Total de carne</div><div class="v">${totalGramos} g (${totalKg.toFixed(2)} kg)</div></div>
+          <div class="stat"><div class="k">Unidades necesarias</div><div class="v">${unidades}</div></div>
+          <div class="stat"><div class="k">Tiempo estimado</div><div class="v">${tiempoEstimado} min</div></div>
+          <div class="stat"><div class="k">Fuego recomendado</div><div class="v">${fuego}</div></div>
+          <div class="stat"><div class="k">Giro cada</div><div class="v">${giroCada} min</div></div>
+          <div class="stat"><div class="k">Vueltas totales</div><div class="v">${vueltas}</div></div>
+        </div>
+        ${costoCLP ? `<div class="tip">💵 Estimado de costo: ${formateaCLP(costoCLP)} por ${totalKg.toFixed(2)} kg</div>` : ""}
+        <h3>🗺️ Plan de cocción</h3>
+        <div class="timeline">
+          ${steps.map(s=>`
+            <div class="step">
+              <div class="dot" aria-hidden="true"></div>
+              <div>
+                <div style="font-weight:700">${s.titulo}</div>
+                <div class="muted">${s.detalle}</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+        ${renderTipsExtra(tipoCarne, corte, nivel)}
+      `;
+      resultado.innerHTML = html;
+    });
+
+    function generarTimeline({ tipoCarne, corte, nivel, coccion, tipoParrilla, tiempoEstimado, giroCada }){
+      const zonas = tipoParrilla === "gas" ? "control de perillas" : "zonas directa e indirecta";
+      const inicioSear = (nivel === "experto" || corte.includes("Entraña") || corte.includes("Lomo")) ? "Sellado inicial 90–120 s por lado en calor fuerte." : "Poner en calor medio y estabilizar.";
+      const giroTxt = `Giros cada ${giroCada} min. Mantén ${zonas} activas.`;
+
+      const descanso = tipoCarne === "vacuno" ? "Reposo 6–8 min, cortar contra la fibra." :
+                        tipoCarne === "cerdo"  ? "Reposo 8–10 min, verificar jugos claros." :
+                        tipoCarne === "pollo"  ? "Reposo 5–7 min, confirmar que no haya rosado interno." :
+                                                  "Reposo breve 3–4 min, servir de inmediato.";
+
+      const pasosBase = [
+        { titulo:"Precalentamiento y armado del fuego", detalle:`Fuego ${fuegoRecomendado(tipoCarne, corte).toLowerCase()}. Define ${zonas}.` },
+        { titulo:"Entrada a parrilla", detalle:inicioSear },
+        { titulo:"Cocción controlada", detalle:`Mantener temperatura estable. ${giroTxt}` },
+        { titulo:"Verificación de punto", detalle:`Buscar ${coccion.replace("apunto","a punto")}. Ajusta posición si chorrea grasa.` },
+        { titulo:"Descanso y corte", detalle:descanso }
+      ];
+
+      if (nivel === "principiante"){
+        pasosBase.splice(2,0,{ titulo:"Chequeo a mitad de tiempo", detalle:`A los ${Math.round(tiempoEstimado/2)} min, revisa color y jugos.`});
+      }
+      if (nivel === "experto"){
+        pasosBase.splice(1,0,{ titulo:"Gestión de zonas", detalle:"Mover entre directa/indirecta para equilibrio de crocante y punto."});
+        pasosBase.push({ titulo:"Acabado", detalle:"Si procede, golpe final de calor o mantequilla con hierbas."});
+      }
+      return pasosBase;
+    }
+
+    function renderTipsExtra(tipoCarne, corte, nivel){
+      const tips = [];
+      if (tipoCarne === "vacuno" && corte.includes("Asado de tira")){
+        tips.push("Para cortes gruesos, prioriza calor indirecto prolongado y termina con sellado corto.");
+      }
+      if (tipoCarne === "vacuno" && corte.includes("Entraña")){
+        tips.push("Entraña va rápido: alto calor, poco tiempo. Evita pasarte para no perder jugos.");
+      }
+      if (tipoCarne === "cerdo" && corte.includes("Costillar")){
+        tips.push("Pincela cada 15–20 min con mezcla ácida dulce para brillo y equilibrio.");
+      }
+      if (tipoCarne === "pollo" && corte.includes("Trutro")){
+        tips.push("Ubica piel hacia arriba en indirecto, termina piel abajo para crocante sin quemar.");
+      }
+      if (tipoCarne === "pescado"){
+        tips.push("Usa plancha o rejilla aceitada; mueve lo justo para evitar que se desarme.");
+      }
+      if (nivel === "principiante"){
+        tips.push("No sobrecargues la parrilla: deja espacio para mover y controlar calor.");
+      } else if (nivel === "experto"){
+        tips.push("Prueba ‘reverse sear’: 80% del tiempo en indirecto y final en directo alto.");
+      }
+      if (!tips.length) return "";
+      return `<div class="tip">💡 Tips extra: ${tips.join(" • ")}</div>`;
+    }
+
+    function formateaCLP(n){
+      return new Intl.NumberFormat("es-CL",{ style:"currency", currency:"CLP", maximumFractionDigits:0 }).format(n);
+    }
+
+    // Historial en localStorage
+    const guardarBtn = document.getElementById("guardar");
+    guardarBtn.addEventListener("click", ()=>{
+      const personas = parseInt(personasInput.value || "0", 10);
+      const tipoCarne = tipoCarneSel.value;
+      const corte = corteSel.value;
+      const nivel = nivelSel.value;
+      const coccion = document.getElementById("coccion").value;
+      const precioKg = parseInt(precioInput.value || "0", 10);
+
+      if (!personas || !tipoCarne || !corte || !nivel || !coccion){
+        alert("Completa los campos antes de guardar.");
+        return;
+      }
+      const entry = {
+        fecha: new Date().toISOString(),
+        personas, tipoCarne, corte, nivel, coccion, tipoParrilla, precioKg
+      };
+      const hist = JSON.parse(localStorage.getItem("ene_hist")||"[]");
+      hist.unshift(entry);
+      localStorage.setItem("ene_hist", JSON.stringify(hist.slice(0,8))); // mantener últimos 8
+      renderHistorial();
+    });
+
+    function renderHistorial(){
+      const hist = JSON.parse(localStorage.getItem("ene_hist")||"[]");
+      if (!hist.length){
+        historialDiv.innerHTML = "<p class='muted'>Aún no hay asados guardados. Calcula y guarda tu primera experiencia.</p>";
+        return;
+      }
+      historialDiv.innerHTML = hist.map(h=>{
+        const fecha = new Date(h.fecha);
+        const nice = fecha.toLocaleString("es-CL",{ dateStyle:"medium", timeStyle:"short" });
+        return `
+          <div class="item">
+            <div>
+              <div class="title">🍖 ${capitalize(h.tipoCarne)} — ${h.corte}</div>
+              <div class="meta">${nice} • ${h.personas} personas • ${capitalize(h.nivel)} • Parrilla: ${h.tipoParrilla}</div>
+            </div>
+            <a class="link" href="#" onclick='cargarDesdeHistorial(${JSON.stringify(h).replace(/"/g,"&quot;")});return false;'>Cargar</a>
+          </div>
+        `;
+      }).join("");
+    }
+    function cargarDesdeHistorial(h){
+      personasInput.value = h.personas;
+      nivelSel.value = h.nivel;
+      tipoCarneSel.value = h.tipoCarne;
+      actualizarCortes();
+      corteSel.value = h.corte;
+      document.getElementById("coccion").value = h.coccion;
+      precioInput.value = h.precioKg || "";
+      document.querySelectorAll(".seg").forEach(b=>{
+        b.classList.toggle("active", b.dataset.parrilla === h.tipoParrilla);
+      });
+      tipoParrilla = h.tipoParrilla;
+      document.getElementById("formParrilla").dispatchEvent(new Event("submit"));
+      window.scrollTo({ top:0, behavior:"smooth" });
+    }
+    function capitalize(s){ return s ? s[0].toUpperCase() + s.slice(1) : s; }
+
+    // Inicializaciones
+    renderHistorial();
+  </script>
+</body>
+</html>
